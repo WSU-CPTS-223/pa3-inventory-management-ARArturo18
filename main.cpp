@@ -1,5 +1,4 @@
-#include <iostream>
-#include <string>
+#include "InventoryManagement.hpp"
 
 using namespace std;
 
