@@ -1,4 +1,6 @@
 #include "InventoryManagement.hpp"
+#include "Product.hpp"
+#include "Inventory.hpp"
 
 using namespace std;
 
@@ -18,7 +20,7 @@ bool validCommand(string line)
            (line.rfind("listInventory") == 0);
 }
 
-void evalCommand(string line)
+void evalCommand(string line, Inventory& ourInventory)
 {
     if (line == ":help")
     {
@@ -28,17 +30,46 @@ void evalCommand(string line)
     else if (line.rfind("find", 0) == 0)
     {
         // Look up the appropriate datastructure to find if the inventory exist
-        cout << "YET TO IMPLEMENT!" << endl;
+        string inventID = line.substr(5);
+
+        Product* product = ourInventory.searchProductID(inventID);
+
+        if(product)
+        {
+            //print 
+            product->print();
+        }
+        else
+        {
+            cout << "not found" << endl;
+        }
+
     }
     // if line starts with listInventory
-    else if (line.rfind("listInventory") == 0)
+    // Look up the appropriate datastructure to find all inventory belonging to a specific category
+    else if (line.rfind("listInventory", 0) == 0)
     {
-        // Look up the appropriate datastructure to find all inventory belonging to a specific category
-        cout << "YET TO IMPLEMENT!" << endl;
+        string category = line.substr(14);
+        vector<Product> product = ourInventory.products_by_cat(category);
+
+        if(product.empty())
+        {
+            cout<< "Invalid Category" << endl;
+        }
+        else 
+        {
+            for (const auto& p : product)
+            {
+                cout << " Unique ID:  " << p.unique_id << endl;
+                cout << "Product Name: " << p.product_name << endl;
+                cout<<endl;
+            }
+        }
+
     }
 }
 
-void bootStrap()
+void bootStrap(Inventory& ourInventory)
 {
     cout << "\n Welcome to Amazon Inventory Query System" << endl;
     cout << " enter :quit to exit. or :help to list supported commands." << endl;
@@ -47,17 +78,21 @@ void bootStrap()
     // example: reading from CSV and initializing the data structures
     // Don't dump all code into this single function
     // use proper programming practices
+
+    Product parseCSV; 
+    parseCSV.parseFILE("marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data-1.csv", ourInventory);
 }
 
 int main(int argc, char const *argv[])
 {
+    Inventory ourInventory;
     string line;
-    bootStrap();
+    bootStrap(ourInventory);
     while (getline(cin, line) && line != ":quit")
     {
         if (validCommand(line))
         {
-            evalCommand(line);
+            evalCommand(line, ourInventory);
         }
         else
         {

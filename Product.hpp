@@ -2,6 +2,8 @@
 
 #include "InventoryManagement.hpp"
 
+class Inventory;
+
 class Product
 {
     public:
@@ -9,7 +11,7 @@ class Product
         string product_name;
         string brand_name;
         string asin;
-        string product_name;
+
         vector<string> categories;
 
         Product() {};
@@ -17,14 +19,20 @@ class Product
         Product(const string& id, const string& name, const vector<string>& cat) : 
                 unique_id(id), product_name(name), categories(cat) {} 
 
-        void parseFILE(const string& FILE);
-        vector<string> parseLINE(const string& line);
+        void parseFILE(const string& FILE, Inventory& ourInventory);
 
         void print();
 
     private:
 
 };
+
+#include"Inventory.hpp"
+
+map<string, Product> inventoryID;
+map<string, vector<Product>> inventoryCategory;
+
+
 
 void Product::print()
 {
@@ -37,17 +45,12 @@ void Product::print()
         cout << category << " ";
     }
 
-    cout << endl;
+    cout << "\n" << endl;
 
 }
 
-vector<string> Product::parseLINE(const string& line)
-{
-
-}
-
-
-void Product::parseFILE(const string& FILE)
+//cleans line, then parses into a vector, and puts everything into a new product
+void Product::parseFILE(const string& FILE, Inventory& ourInventory)
 {
     ifstream infile(FILE);
     string line;
@@ -56,43 +59,74 @@ void Product::parseFILE(const string& FILE)
     cin.ignore();
     getline(infile, line);
 
+    //goes through all the lines.
     while(getline(infile, line))
     {
         stringstream ss(line);
-        vector<string> lineData;
-        string info;
+
+        vector<string> lineFields;
+        string field;
+        bool commaQuotes = false;
+        //Commas in Quotes
+        for(char c : line)
+        {
+            if(c == '"')
+            {
+                commaQuotes = true;
+            }
+            else if (c == ',' && commaQuotes == true)
+            {
+                lineFields.push_back(field);
+            }
+            else
+            {
+                field += c;
+            }
+        }
+        lineFields.push_back(field);
+
 
         cin.ignore();
 
-        //get all data from line and push to line data.
-        //Unique ID, Product Name, Brand Name, Asin
-        while(getline(ss, info, ','))
-        {
-            lineData.push_back(info);
-        }
+        
+        //assign data and fix it's categories. 
+        //only get Unique ID, Product Name, Brand Name, Asin, category
+        string product_id = lineFields[0];
+        string product_name = lineFields[1];
+        string brand_name = lineFields[2];
+        string asin = lineFields[3];
+        string category = lineFields[4];
 
-        //assign data to a new Product.
-        //only get Unique ID, Product Name, Brand Name, Asin
-        Product product;
-        product.unique_id = lineData[0];
-        product.product_name = lineData[1];
-        product.brand_name = lineData[2];
-        product.asin = lineData[3];
 
         //sort out it's category if emmty, then if its not
-        string category_line = lineData[4];
-        if (category_line.empty() == 0)
+        set<string> lineCategories;
+        if (category.empty() == 1)
         {
-            product.categories.push_back("NA");
+            lineCategories.insert("NA");
         }
         else
         {
-            stringstream field(category_line);
+            stringstream ss(category);
             string temp;
+
+            while(getline(ss, temp, '|'))
+            {
+                if(temp.empty() == 0)
+                {
+                    lineCategories.insert(temp);
+                }
+            }
 
         }
         
+        //make a new product the line and put them into both structures of id and categories. 
+        Product newProduct(product_id, product_name, lineFields);
+
+        ourInventory.insertProduct(newProduct);
 
     }
+
+    cout<<"SUCCESSS PARSING" << endl;
+    infile.close();
     
 }
