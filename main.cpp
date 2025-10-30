@@ -41,7 +41,7 @@ void evalCommand(string line, Inventory& ourInventory)
         }
         else
         {
-            cout << "not found" << endl;
+            cout << "Inventory/Product not found" << endl;
         }
 
     }
@@ -60,27 +60,27 @@ void evalCommand(string line, Inventory& ourInventory)
         {
             for (const auto& p : product)
             {
-                cout << " Unique ID:  " << p.unique_id << endl;
+                cout << "Unique ID:  " << p.unique_id << endl;
                 cout << "Product Name: " << p.product_name << endl;
                 cout<<endl;
             }
         }
-
     }
 }
 
 void bootStrap(Inventory& ourInventory)
 {
+    Product parseCSV; 
+    parseCSV.parseFILE("marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data-1.csv", ourInventory);
     cout << "\n Welcome to Amazon Inventory Query System" << endl;
     cout << " enter :quit to exit. or :help to list supported commands." << endl;
     cout << "\n> ";
+
     // TODO: Do all your bootstrap operations here
     // example: reading from CSV and initializing the data structures
     // Don't dump all code into this single function
     // use proper programming practices
 
-    Product parseCSV; 
-    parseCSV.parseFILE("marketing_sample_for_amazon_com-ecommerce__20200101_20200131__10k_data-1.csv", ourInventory);
 }
 
 int main(int argc, char const *argv[])

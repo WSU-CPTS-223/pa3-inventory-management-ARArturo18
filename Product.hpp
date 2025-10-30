@@ -11,7 +11,6 @@ class Product
         string product_name;
         string brand_name;
         string asin;
-
         vector<string> categories;
 
         Product() {};
@@ -29,15 +28,14 @@ class Product
 
 #include"Inventory.hpp"
 
-map<string, Product> inventoryID;
-map<string, vector<Product>> inventoryCategory;
-
 
 
 void Product::print()
 {
-    cout<<"Unique ID: " << unique_id << endl;
-    cout<<"Product Name: " << product_name << endl;
+    cout<< "Unique ID: " << unique_id << endl;
+    cout<< "Product Name: " << product_name << endl;
+    cout << "Brand Name: " << brand_name << endl;
+    cout << "Asin: " << asin << endl;
     cout<<"Categories: ";
 
     for(const auto& category : categories)
@@ -83,6 +81,7 @@ void Product::parseFILE(const string& FILE, Inventory& ourInventory)
                 field += c;
             }
         }
+
         lineFields.push_back(field);
 
 
@@ -107,13 +106,13 @@ void Product::parseFILE(const string& FILE, Inventory& ourInventory)
         else
         {
             stringstream ss(category);
-            string temp;
+            string holder;
 
-            while(getline(ss, temp, '|'))
+            while(getline(ss, holder, '|'))
             {
-                if(temp.empty() == 0)
+                if(holder.empty() == 0)
                 {
-                    lineCategories.insert(temp);
+                    lineCategories.insert(holder);
                 }
             }
 

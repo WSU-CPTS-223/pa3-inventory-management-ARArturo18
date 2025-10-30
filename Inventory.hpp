@@ -11,7 +11,7 @@ class Inventory
         vector<Product> products_by_cat(const string& category);
 
     private:
-        //story the inventory by... 
+        //store the inventory. id and category
         std::unordered_map<string, Product> inventory_by_ID;
         std::unordered_map<string, vector<Product>> inventory_by_category; 
 
@@ -41,7 +41,7 @@ vector<Product> Inventory::products_by_cat(const string& category)
     }
     else
     {
-    return inventory_by_category[category];
+        return inventory_by_category[category];
     }
 
 }
